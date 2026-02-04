@@ -576,56 +576,156 @@ h1 {
 
 /* 响应式设计 */
 @media (max-width: 600px) {
+    .bg-toggle-switch {
+        top: 10px;
+        right: 10px;
+        gap: 8px;
+    }
+
+    .switch-label {
+        font-size: 12px;
+    }
+
+    .switch {
+        width: 44px;
+        height: 24px;
+    }
+
+    .slider:before {
+        height: 18px;
+        width: 18px;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(20px);
+    }
+
     .todo-app {
-        padding: 20px;
+        padding: 15px;
+        margin-top: 50px;
     }
 
     h1 {
-        font-size: 24px;
-        margin-bottom: 20px;
+        font-size: 22px;
+        margin-bottom: 15px;
     }
 
     .input-section {
         flex-direction: column;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .task-input {
+        padding: 10px 12px;
+        font-size: 14px;
     }
 
     .add-btn {
         width: 100%;
+        padding: 10px 16px;
+        font-size: 14px;
     }
 
     .priority-select {
         width: 100%;
+        padding: 10px 12px;
+        font-size: 13px;
     }
 
     .stats {
-        gap: 10px;
+        flex-direction: column;
+        gap: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .stat-item {
+        padding: 10px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .stat-item:last-child {
+        border-bottom: none;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        margin-bottom: 6px;
     }
 
     .stat-value {
         font-size: 24px;
     }
 
+    .stat-value.clickable {
+        cursor: pointer;
+    }
+
     .clear-btn {
-        flex: 1;
-        min-width: 120px;
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 13px;
+        margin-bottom: 8px;
     }
 
     .clear-all-btn {
-        flex: 1;
-        min-width: 120px;
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 13px;
     }
 
     .task-item {
         padding: 12px;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    .task-checkbox {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
     }
 
     .task-text {
         font-size: 14px;
     }
 
-    .delete-btn {
-        padding: 4px 8px;
+    .task-time {
+        font-size: 11px;
+    }
+
+    .edit-btn {
+        padding: 6px 10px;
         font-size: 12px;
+    }
+
+    .delete-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-height: 70vh;
+    }
+
+    .deleted-task-item {
+        padding: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .deleted-task-text {
+        width: 100%;
+        word-break: break-all;
+    }
+
+    .deleted-task-time {
+        font-size: 11px;
+        margin-left: 0;
+        color: #bbb;
     }
 }
 
