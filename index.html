@@ -57,7 +57,22 @@
                 </div>
             </div>
 
-            <ul id="taskList" class="task-list"></ul>
+            <div class="tasks-container">
+                <div class="tasks-column">
+                    <h2 class="column-title">📝 待办事项</h2>
+                    <ul id="pendingTaskList" class="task-list pending-list"></ul>
+                    <div id="emptyPending" class="empty-column">
+                        <p>暂无待办任务</p>
+                    </div>
+                </div>
+                <div class="tasks-column">
+                    <h2 class="column-title">✅ 已完成</h2>
+                    <ul id="completedTaskList" class="task-list completed-list"></ul>
+                    <div id="emptyCompleted" class="empty-column">
+                        <p>暂无已完成任务</p>
+                    </div>
+                </div>
+            </div>
 
             <div id="emptyState" class="empty-state">
                 <p>暂无任务，开始添加一个吧！</p>

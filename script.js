@@ -102,8 +102,40 @@ class TodoApp {
         if (task) {
             task.completed = !task.completed;
             this.saveTasks();
-            this.updateTaskItem(id);
+            // 添加动画效果后重新渲染
+            this.animateTaskMove(id, task.completed);
             this.updateStats();
+        }
+    }
+
+    animateTaskMove(id, isCompleted) {
+        const taskElement = document.querySelector(`[data-task-id="${id}"]`);
+        if (taskElement) {
+            // 获取任务元素的位置信息
+            const rect = taskElement.getBoundingClientRect();
+            const startY = rect.top;
+
+            // 确定目标列表
+            const targetListId = isCompleted ? 'completedTaskList' : 'pendingTaskList';
+            const targetList = document.getElementById(targetListId);
+            const targetRect = targetList.getBoundingClientRect();
+            const endY = targetRect.top;
+
+            // 计算移动距离
+            const distance = endY - startY;
+
+            // 应用动画
+            if (isCompleted) {
+                // 向下滑动到已完成
+                taskElement.style.animation = `slideDown ${Math.abs(distance) / 300}s ease-out forwards`;
+            } else {
+                // 向上滑动到待办
+                taskElement.style.animation = `slideUp ${Math.abs(distance) / 300}s ease-out forwards`;
+            }
+
+            setTimeout(() => {
+                this.renderTaskList();
+            }, Math.abs(distance) / 300 * 1000);
         }
     }
 
@@ -204,45 +236,86 @@ class TodoApp {
     }
 
     renderTaskList() {
-        const taskList = document.getElementById('taskList');
+        const pendingList = document.getElementById('pendingTaskList');
+        const completedList = document.getElementById('completedTaskList');
         const emptyState = document.getElementById('emptyState');
-
-        taskList.innerHTML = '';
+        const emptyPending = document.getElementById('emptyPending');
+        const emptyCompleted = document.getElementById('emptyCompleted');
 
         if (this.tasks.length === 0) {
+            pendingList.innerHTML = '';
+            completedList.innerHTML = '';
             emptyState.classList.add('show');
             return;
         }
 
         emptyState.classList.remove('show');
 
-        // 排序：未完成的任务在上，已完成的任务在下
-        const sortedTasks = [
-            ...this.tasks.filter(task => !task.completed),
-            ...this.tasks.filter(task => task.completed)
-        ];
+        // 分离待办和已完成任务
+        const pendingTasks = this.tasks.filter(task => !task.completed);
+        const completedTasks = this.tasks.filter(task => task.completed);
 
-        sortedTasks.forEach(task => {
-            const li = document.createElement('li');
-            const priorityClass = 'priority-' + (task.priority || 'medium');
-            li.className = 'task-item ' + priorityClass + (task.completed ? ' completed' : '');
-            li.setAttribute('data-task-id', task.id);
+        // 渲染待办任务
+        this.renderTasksToList(pendingList, pendingTasks, emptyPending);
 
-            const checkboxState = task.completed ? 'checked' : '';
-            const createdTime = new Date(task.createdAt).toLocaleString('zh-CN');
-            li.innerHTML = '<input type="checkbox" class="task-checkbox" ' + checkboxState + ' data-id="' + task.id + '"><div class="task-content"><span class="task-text">' + this.escapeHtml(task.text) + '</span><span class="task-time">📅 ' + createdTime + '</span></div><button class="edit-btn" data-id="' + task.id + '">编辑</button><button class="delete-btn" data-id="' + task.id + '">删除</button>';
+        // 渲染已完成任务
+        this.renderTasksToList(completedList, completedTasks, emptyCompleted);
+    }
 
-            const checkbox = li.querySelector('.task-checkbox');
-            checkbox.addEventListener('change', () => this.toggleTask(task.id));
+    renderTasksToList(listElement, tasks, emptyElement) {
+        if (tasks.length === 0) {
+            listElement.innerHTML = '';
+            emptyElement.style.display = 'block';
+        } else {
+            emptyElement.style.display = 'none';
 
-            const editBtn = li.querySelector('.edit-btn');
-            editBtn.addEventListener('click', () => this.editTask(task.id));
+            // 清空列表但保留动画中的元素
+            const existingIds = new Set(Array.from(listElement.children).map(el => el.getAttribute('data-task-id')));
 
-            const deleteBtn = li.querySelector('.delete-btn');
-            deleteBtn.addEventListener('click', () => this.deleteTask(task.id));
+            // 移除不在当前任务列表中的元素
+            Array.from(listElement.children).forEach(el => {
+                const id = el.getAttribute('data-task-id');
+                if (!tasks.find(t => t.id == id)) {
+                    el.remove();
+                }
+            });
 
-            taskList.appendChild(li);
-        });
+            // 添加或更新任务
+            tasks.forEach((task, index) => {
+                let li = listElement.querySelector(`[data-task-id="${task.id}"]`);
+
+                if (!li) {
+                    // 新任务，创建元素
+                    li = this.createTaskElement(task);
+                    listElement.appendChild(li);
+                } else {
+                    // 已存在的任务，清除动画样式
+                    li.style.animation = 'none';
+                }
+            });
+        }
+    }
+
+    createTaskElement(task) {
+        const li = document.createElement('li');
+        const priorityClass = 'priority-' + (task.priority || 'medium');
+        li.className = 'task-item ' + priorityClass + (task.completed ? ' completed' : '');
+        li.setAttribute('data-task-id', task.id);
+
+        const checkboxState = task.completed ? 'checked' : '';
+        const createdTime = new Date(task.createdAt).toLocaleString('zh-CN');
+        li.innerHTML = '<input type="checkbox" class="task-checkbox" ' + checkboxState + ' data-id="' + task.id + '"><div class="task-content"><span class="task-text">' + this.escapeHtml(task.text) + '</span><span class="task-time">📅 ' + createdTime + '</span></div><button class="edit-btn" data-id="' + task.id + '">编辑</button><button class="delete-btn" data-id="' + task.id + '">删除</button>';
+
+        const checkbox = li.querySelector('.task-checkbox');
+        checkbox.addEventListener('change', () => this.toggleTask(task.id));
+
+        const editBtn = li.querySelector('.edit-btn');
+        editBtn.addEventListener('click', () => this.editTask(task.id));
+
+        const deleteBtn = li.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', () => this.deleteTask(task.id));
+
+        return li;
     }
 
     updateStats() {

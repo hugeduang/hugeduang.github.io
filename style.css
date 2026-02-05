@@ -327,9 +327,44 @@ h1 {
     transform: scale(1.1);
 }
 
+.tasks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.tasks-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.column-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    padding: 8px 0;
+    border-bottom: 2px solid #e0e0e0;
+}
+
 .task-list {
     list-style: none;
-    margin-bottom: 20px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 50px;
+}
+
+.empty-column {
+    text-align: center;
+    padding: 30px 15px;
+    color: #ccc;
+    font-size: 14px;
+    display: none;
 }
 
 .task-item {
@@ -368,6 +403,39 @@ h1 {
     to {
         opacity: 1;
         transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100px) scale(0.8);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(200px);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-200px);
     }
 }
 
@@ -588,6 +656,14 @@ h1 {
 
 /* 响应式设计 */
 @media (max-width: 600px) {
+    .column-title {
+        font-size: 14px;
+        padding: 6px 0;
+    }
+
+    .task-list {
+        gap: 8px;
+    }
     .bg-toggle-switch {
         top: 10px;
         right: 10px;
