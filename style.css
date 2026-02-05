@@ -278,12 +278,11 @@ h1 {
 .stats {
     display: flex;
     gap: 20px;
-    margin-bottom: 30px;
     padding: 20px;
     background: #f8f9fa;
     border-radius: 12px;
     align-items: center;
-    flex-wrap: wrap;
+    flex: 1;
 }
 
 .stats-container {
