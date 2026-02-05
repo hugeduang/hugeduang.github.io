@@ -761,10 +761,6 @@ h1 {
         font-size: 20px;
     }
 
-    .stats {
-        flex-direction: column;
-    }
-
     .stat-item {
         padding: 10px;
     }
