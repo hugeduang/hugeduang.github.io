@@ -665,6 +665,8 @@ h1 {
         flex-direction: row;
         gap: 8px;
         width: 100%;
+        justify-content: center;
+        margin-bottom: 15px;
     }
 
     .stat-item {
