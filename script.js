@@ -10,6 +10,7 @@ class TodoApp {
         this.deletedTasksKey = 'todoAppDeletedTasks';
         this.bgAnimationKey = 'todoAppBgAnimation';
         this.bgAnimationEnabled = true;
+        this.selectedCategory = '';
         this.init();
     }
 
@@ -26,10 +27,10 @@ class TodoApp {
         const addBtn = document.getElementById('addBtn');
         const taskInput = document.getElementById('taskInput');
         const clearBtn = document.getElementById('clearBtn');
-        const clearAllBtn = document.getElementById('clearAllBtn');
         const deletedCount = document.getElementById('deletedCount');
         const closeDeletedModal = document.getElementById('closeDeletedModal');
         const bgToggleCheckbox = document.getElementById('bgToggleCheckbox');
+        const categoryTabs = document.querySelectorAll('.category-tab');
 
         addBtn.addEventListener('click', () => this.addTask());
         taskInput.addEventListener('keypress', (e) => {
@@ -38,15 +39,19 @@ class TodoApp {
             }
         });
         clearBtn.addEventListener('click', () => this.clearCompleted());
-        clearAllBtn.addEventListener('click', () => this.clearAll());
         deletedCount.addEventListener('click', () => this.showDeletedTasks());
         closeDeletedModal.addEventListener('click', () => this.closeDeletedModal());
         bgToggleCheckbox.addEventListener('change', () => this.toggleBgAnimation());
+
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', (e) => this.filterByCategory(e.target.dataset.category));
+        });
     }
 
     addTask() {
         const taskInput = document.getElementById('taskInput');
         const prioritySelect = document.getElementById('prioritySelect');
+        const categorySelect = document.getElementById('categorySelect');
         const taskText = taskInput.value.trim();
 
         if (taskText === '') {
@@ -58,6 +63,7 @@ class TodoApp {
             id: Date.now(),
             text: taskText,
             priority: prioritySelect.value,
+            category: categorySelect.value,
             completed: false,
             createdAt: new Date().toISOString()
         };
@@ -66,6 +72,7 @@ class TodoApp {
         this.saveTasks();
         this.render();
         taskInput.value = '';
+        categorySelect.value = '';
         taskInput.focus();
     }
 
@@ -211,7 +218,51 @@ class TodoApp {
 
     loadTasks() {
         const stored = localStorage.getItem(this.storageKey);
-        this.tasks = stored ? JSON.parse(stored) : [];
+        if (stored) {
+            this.tasks = JSON.parse(stored);
+        } else {
+            // 初始化默认任务
+            this.tasks = this.getDefaultTasks();
+            this.saveTasks();
+        }
+    }
+
+    getDefaultTasks() {
+        const now = new Date();
+        return [
+            {
+                id: now.getTime(),
+                text: '欢迎使用待办清单ToDo List',
+                priority: 'low',
+                category: 'life',
+                completed: false,
+                createdAt: new Date(now.getTime()).toISOString()
+            },
+            {
+                id: now.getTime() + 1,
+                text: '在上方输入框内可添加待办事项、设置优先级和分类',
+                priority: 'medium',
+                category: 'life',
+                completed: false,
+                createdAt: new Date(now.getTime() - 1000).toISOString()
+            },
+            {
+                id: now.getTime() + 2,
+                text: '点击左边勾选框完成一项任务',
+                priority: 'high',
+                category: 'life',
+                completed: false,
+                createdAt: new Date(now.getTime() - 2000).toISOString()
+            },
+            {
+                id: now.getTime() + 3,
+                text: '完成的事项会显示在这，你可选择删除',
+                priority: 'low',
+                category: 'life',
+                completed: true,
+                createdAt: new Date(now.getTime() - 3000).toISOString()
+            }
+        ];
     }
 
     loadDeletedCount() {
@@ -238,34 +289,51 @@ class TodoApp {
     renderTaskList() {
         const pendingList = document.getElementById('pendingTaskList');
         const completedList = document.getElementById('completedTaskList');
-        const emptyState = document.getElementById('emptyState');
         const emptyPending = document.getElementById('emptyPending');
         const emptyCompleted = document.getElementById('emptyCompleted');
 
-        if (this.tasks.length === 0) {
-            pendingList.innerHTML = '';
-            completedList.innerHTML = '';
-            emptyState.classList.add('show');
-            return;
-        }
-
-        emptyState.classList.remove('show');
-
         // 分离待办和已完成任务
-        const pendingTasks = this.tasks.filter(task => !task.completed);
-        const completedTasks = this.tasks.filter(task => task.completed);
+        let pendingTasks = this.tasks.filter(task => !task.completed);
+        let completedTasks = this.tasks.filter(task => task.completed);
+
+        // 按分类筛选
+        if (this.selectedCategory) {
+            pendingTasks = pendingTasks.filter(task => task.category === this.selectedCategory);
+            completedTasks = completedTasks.filter(task => task.category === this.selectedCategory);
+        }
 
         // 渲染待办任务
         this.renderTasksToList(pendingList, pendingTasks, emptyPending);
 
-        // 渲染已完成任务
-        this.renderTasksToList(completedList, completedTasks, emptyCompleted);
+        // 渲染已完成任务 - 已完成部分始终隐藏空状态
+        if (completedTasks.length === 0) {
+            completedList.innerHTML = '';
+            emptyCompleted.style.display = 'none';
+        } else {
+            this.renderTasksToList(completedList, completedTasks, emptyCompleted);
+        }
+    }
+
+    filterByCategory(category) {
+        this.selectedCategory = category;
+
+        // 更新标签页的active状态
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        categoryTabs.forEach(tab => {
+            if (tab.dataset.category === category) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+
+        this.render();
     }
 
     renderTasksToList(listElement, tasks, emptyElement) {
         if (tasks.length === 0) {
             listElement.innerHTML = '';
-            emptyElement.style.display = 'block';
+            emptyElement.style.display = 'flex';
         } else {
             emptyElement.style.display = 'none';
 
@@ -309,6 +377,7 @@ class TodoApp {
 
         const checkboxState = task.completed ? 'checked' : '';
         const createdTime = new Date(task.createdAt).toLocaleString('zh-CN');
+
         li.innerHTML = '<input type="checkbox" class="task-checkbox" ' + checkboxState + ' data-id="' + task.id + '"><div class="task-content"><span class="task-text">' + this.escapeHtml(task.text) + '</span><span class="task-time">📅 ' + createdTime + '</span></div><button class="edit-btn" data-id="' + task.id + '">编辑</button><button class="delete-btn" data-id="' + task.id + '">删除</button>';
 
         const checkbox = li.querySelector('.task-checkbox');

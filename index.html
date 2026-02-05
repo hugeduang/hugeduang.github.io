@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>待办事项应用</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23667eea' rx='20'/><g stroke='white' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'><path d='M 25 50 L 40 65 L 75 30'/><path d='M 25 25 L 75 25 L 75 75 L 25 75 Z'/></g></svg>">
 </head>
 <body>
     <!-- 背景切换开关 -->
@@ -21,17 +22,24 @@
             <h1>✨ 我的待办清单</h1>
 
             <div class="input-section">
-                <input
-                    type="text"
-                    id="taskInput"
-                    class="task-input"
-                    placeholder="今天要做什么？"
-                    autocomplete="off"
-                >
-                <select id="prioritySelect" class="priority-select">
-                    <option value="low">低优先级</option>
-                    <option value="medium" selected>中优先级</option>
-                    <option value="high">高优先级</option>
+                <div class="input-wrapper">
+                    <input
+                        type="text"
+                        id="taskInput"
+                        class="task-input"
+                        placeholder="今天要做什么？"
+                        autocomplete="off"
+                    >
+                    <select id="prioritySelect" class="priority-select">
+                        <option value="low">低优先级</option>
+                        <option value="medium" selected>中优先级</option>
+                        <option value="high">高优先级</option>
+                    </select>
+                </div>
+                <select id="categorySelect" class="category-select">
+                    <option value="life" selected>生活</option>
+                    <option value="work">工作</option>
+                    <option value="study">学习</option>
                 </select>
                 <button id="addBtn" class="add-btn">➕ 添加任务</button>
             </div>
@@ -51,31 +59,75 @@
                         <span class="stat-value clickable" id="deletedCount">0</span>
                     </div>
                 </div>
-                <div class="stats-buttons">
-                    <button id="clearBtn" class="clear-btn">🗑️ 清空已完成</button>
-                    <button id="clearAllBtn" class="clear-all-btn">⚠️ 全部清空</button>
-                </div>
             </div>
 
             <div class="tasks-container">
                 <div class="tasks-column">
+                    <div class="category-tabs">
+                        <button class="category-tab active" data-category="">全部</button>
+                        <button class="category-tab" data-category="life">生活</button>
+                        <button class="category-tab" data-category="work">工作</button>
+                        <button class="category-tab" data-category="study">学习</button>
+                    </div>
                     <h2 class="column-title">📝 待办事项</h2>
                     <ul id="pendingTaskList" class="task-list pending-list"></ul>
                     <div id="emptyPending" class="empty-column">
-                        <p>暂无待办任务</p>
+                        <svg class="empty-state-icon" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <!-- 背景圆形 -->
+                            <circle cx="100" cy="100" r="95" fill="#f0f1f5" stroke="#e0e0e0" stroke-width="2"/>
+
+                            <!-- 笑脸 -->
+                            <circle cx="100" cy="85" r="50" fill="#ffd700" stroke="#f39c12" stroke-width="2"/>
+
+                            <!-- 左眼 -->
+                            <circle cx="80" cy="75" r="6" fill="#333"/>
+                            <!-- 右眼 -->
+                            <circle cx="120" cy="75" r="6" fill="#333"/>
+
+                            <!-- 嘴巴 -->
+                            <path d="M 80 95 Q 100 110 120 95" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+                            <!-- 左手 -->
+                            <g stroke="#ffd700" stroke-width="3" fill="none" stroke-linecap="round">
+                                <line x1="50" y1="100" x2="30" y2="120"/>
+                                <line x1="30" y1="120" x2="20" y2="110"/>
+                                <line x1="30" y1="120" x2="25" y2="135"/>
+                            </g>
+
+                            <!-- 右手 -->
+                            <g stroke="#ffd700" stroke-width="3" fill="none" stroke-linecap="round">
+                                <line x1="150" y1="100" x2="170" y2="120"/>
+                                <line x1="170" y1="120" x2="180" y2="110"/>
+                                <line x1="170" y1="120" x2="175" y2="135"/>
+                            </g>
+
+                            <!-- 左脚 -->
+                            <g stroke="#ffd700" stroke-width="3" fill="none" stroke-linecap="round">
+                                <line x1="75" y1="135" x2="65" y2="160"/>
+                                <line x1="65" y1="160" x2="55" y2="155"/>
+                                <line x1="65" y1="160" x2="60" y2="175"/>
+                            </g>
+
+                            <!-- 右脚 -->
+                            <g stroke="#ffd700" stroke-width="3" fill="none" stroke-linecap="round">
+                                <line x1="125" y1="135" x2="135" y2="160"/>
+                                <line x1="135" y1="160" x2="145" y2="155"/>
+                                <line x1="135" y1="160" x2="140" y2="175"/>
+                            </g>
+                        </svg>
+                        <p class="empty-text">在上面输入框开始添加新任务吧 ✨</p>
                     </div>
                 </div>
                 <div class="tasks-column">
-                    <h2 class="column-title">✅ 已完成</h2>
+                    <div class="column-header">
+                        <h2 class="column-title">✅ 已完成</h2>
+                        <button id="clearBtn" class="clear-btn">🗑️ 清空</button>
+                    </div>
                     <ul id="completedTaskList" class="task-list completed-list"></ul>
-                    <div id="emptyCompleted" class="empty-column">
-                        <p>暂无已完成任务</p>
+                    <div id="emptyCompleted" class="empty-column empty-completed-only">
+                        <p class="empty-text">看起来你已经完成了所有任务！</p>
                     </div>
                 </div>
-            </div>
-
-            <div id="emptyState" class="empty-state">
-                <p>暂无任务，开始添加一个吧！</p>
             </div>
 
             <!-- 已删除任务模态框 -->
