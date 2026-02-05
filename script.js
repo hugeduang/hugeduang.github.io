@@ -269,19 +269,24 @@ class TodoApp {
         } else {
             emptyElement.style.display = 'none';
 
+            // 按时间倒序排列（最新的在上面）
+            const sortedTasks = [...tasks].sort((a, b) => {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+
             // 清空列表但保留动画中的元素
             const existingIds = new Set(Array.from(listElement.children).map(el => el.getAttribute('data-task-id')));
 
             // 移除不在当前任务列表中的元素
             Array.from(listElement.children).forEach(el => {
                 const id = el.getAttribute('data-task-id');
-                if (!tasks.find(t => t.id == id)) {
+                if (!sortedTasks.find(t => t.id == id)) {
                     el.remove();
                 }
             });
 
             // 添加或更新任务
-            tasks.forEach((task, index) => {
+            sortedTasks.forEach((task, index) => {
                 let li = listElement.querySelector(`[data-task-id="${task.id}"]`);
 
                 if (!li) {

@@ -139,6 +139,7 @@ h1 {
     display: flex;
     gap: 10px;
     margin-bottom: 30px;
+    align-items: center;
 }
 
 .task-input {
@@ -149,6 +150,7 @@ h1 {
     font-size: 16px;
     transition: all 0.3s ease;
     outline: none;
+    min-width: 0;
 }
 
 .priority-select {
@@ -166,6 +168,8 @@ h1 {
     background-position: right 8px center;
     background-size: 20px;
     padding-right: 32px;
+    flex-shrink: 0;
+    min-width: 120px;
 }
 
 .priority-select option {
@@ -210,6 +214,8 @@ h1 {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .add-btn:hover {
@@ -707,6 +713,7 @@ h1 {
     .task-input {
         padding: 10px 12px;
         font-size: 14px;
+        width: 100%;
     }
 
     .add-btn {
@@ -719,6 +726,7 @@ h1 {
         width: 100%;
         padding: 10px 12px;
         font-size: 13px;
+        min-width: unset;
     }
 
     .stats-container {
@@ -839,5 +847,19 @@ h1 {
 
     .stat-item {
         padding: 10px;
+    }
+
+    .input-section {
+        gap: 6px;
+    }
+
+    .priority-select {
+        min-width: 100px;
+        font-size: 12px;
+    }
+
+    .add-btn {
+        padding: 10px 12px;
+        font-size: 13px;
     }
 }
