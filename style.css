@@ -638,12 +638,12 @@ h1 {
         gap: 8px;
         padding: 12px;
         margin-bottom: 15px;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
     }
 
     .stat-item {
         flex: 1;
-        min-width: 80px;
+        min-width: 0;
         padding: 8px;
         border-bottom: none;
         text-align: center;
@@ -663,18 +663,16 @@ h1 {
     }
 
     .clear-btn {
-        flex: 1;
-        min-width: 100px;
-        padding: 8px 10px;
+        padding: 8px 12px;
         font-size: 12px;
         margin-bottom: 0;
+        flex-shrink: 0;
     }
 
     .clear-all-btn {
-        flex: 1;
-        min-width: 100px;
-        padding: 8px 10px;
+        padding: 8px 12px;
         font-size: 12px;
+        flex-shrink: 0;
     }
 
     .task-item {
